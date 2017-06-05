@@ -1,60 +1,58 @@
 pkg_name=ghc
 pkg_origin=alasconnect
 pkg_version=8.0.2
-pkg_source=http://downloads.haskell.org/~ghc/${pkg_version}/ghc-${pkg_version}-x86_64-deb8-linux.tar.xz
-pkg_shasum=5ee68290db00ca0b79d57bc3a5bdce470de9ce9da0b098a7ce6c504605856c8f
+pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
+pkg_license=('BSD-3-Clause')
+pkg_upstream_url=https://www.haskell.org/ghc/
+pkg_description="The Glasgow Haskell Compiler"
+pkg_source=http://downloads.haskell.org/~ghc/${pkg_version}/ghc-${pkg_version}-src.tar.xz
+pkg_shasum=11625453e1d0686b3fa6739988f70ecac836cadc30b9f0c8b49ef9091d6118b1
 pkg_bin_dirs=(bin)
 pkg_lib_dirs=(lib)
+
 pkg_build_deps=(
-  core/patchelf
+  alasconnect/ghc
+  core/make
+  core/diffutils
+  core/sed
+  core/python
+  core/patch
 )
+
 pkg_deps=(
-  core/gmp/6.1.0/20170513202112
-  core/glibc
   core/perl
   core/gcc
-  core/make
+  core/glibc
+  core/gmp/6.1.0/20170513202112
+  core/libedit
   core/libffi
-  alasconnect/ncurses5-compat-libs
+  core/libiconv
+  core/ncurses
 )
 
-ghc_patch_rpath() {
-  RELATIVE_TO=$(dirname $1)
-  RELATIVE_PATHS=$((for LIB_PATH in ${@:2}; do echo '$ORIGIN/'$(realpath --relative-to="$RELATIVE_TO" "$LIB_PATH"); done) | paste -sd ':')
-  patchelf --set-rpath "${LD_RUN_PATH}:$RELATIVE_PATHS" $1
-}
-export -f ghc_patch_rpath
-
 do_build() {
-  build_line "Fixing interpreter for binaries:"
+  libffi_include=$(find $(pkg_path_for core/libffi)/lib/ -name "libffi-*.*.*")
 
-  find . -type f -executable \
-    -exec sh -c 'file -i "$1" | grep -q "x-executable; charset=binary"' _ {} \; \
-    -print \
-    -exec patchelf --interpreter "$(pkg_path_for glibc)/lib/ld-linux-x86-64.so.2" {} \;
+  if [ -z "${libffi_include}" ]; then
+    echo "libffi_include not found, exiting"
+    exit 1
+  fi
 
-  export LD_LIBRARY_PATH="$LD_RUN_PATH"
+  ./configure \
+    --prefix="${pkg_prefix}" \
+    --with-system-libffi \
+    --with-ffi-libraries="$(pkg_path_for core/libffi)/lib" \
+    --with-ffi-includes="${libffi_include}/include" \
+    --with-curses-includes="$(pkg_path_for core/ncurses)/include" \
+    --with-curses-libraries="$(pkg_path_for core/ncurses)/lib" \
+    --with-gmp-includes="$(pkg_path_for core/gmp)/include" \
+    --with-gmp-libraries="$(pkg_path_for core/gmp)/lib" \
+    --with-iconv-includes="$(pkg_path_for core/libiconv)/include" \
+    --with-iconv-libraries="$(pkg_path_for core/libiconv)/lib"
 
-  ./configure --prefix=${pkg_prefix}
+  make
 }
 
-do_install() {
-  do_default_install
-
-  pushd ${pkg_prefix} > /dev/null
-
-  local GHC_LIB_PATHS=$(find . -name '*.so' -printf '%h\n' | uniq)
-
-  build_line "Fixing rpath for binaries:"
-
-  find . -type f -executable \
-    -exec sh -c 'file -i "$1" | grep -q "x-executable; charset=binary"' _ {} \; \
-    -print \
-    -exec bash -c 'ghc_patch_rpath $1 $2 ' _ "{}" "$GHC_LIB_PATHS" \;
-
-  popd > /dev/null
-}
-
-do_strip() {
-  return 0
+do_check() {
+  make test
 }
