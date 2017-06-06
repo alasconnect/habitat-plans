@@ -1,27 +1,31 @@
 pkg_name=haskell-stack
 pkg_origin=alasconnect
 pkg_version=1.4.0
+pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
+pkg_license=('BSD-3-Clause')
+pkg_upstream_url=https://www.haskellstack.org/
+pkg_description="Stack is a cross-platform program for developing Haskell projects."
 pkg_source=https://github.com/commercialhaskell/stack/releases/download/v${pkg_version}/stack-${pkg_version}-linux-x86_64-static.tar.gz
 pkg_shasum=8cc2bb0da1e5f77de7257662c63c82ed289b09a37c72c2fc7a8a81983dbe30ba
 pkg_bin_dirs=(bin)
 
-ghc_version=8.0.2
 pkg_deps=(
-  alasconnect/ghc/${ghc_version}
+  core/perl
+  core/gcc
+  core/glibc
+  core/libffi
+  core/gmp/6.1.0/20170513202112
+  core/make
+  core/xz
+  core/zlib
+  core/git
+  core/gnupg
+  core/tar
+
   core/cacerts
   core/coreutils
   core/gawk
   core/sed
-  core/perl
-  core/make
-  core/tar
-  core/xz
-  core/zlib
-  core/gmp/6.1.0/20170513202112
-  core/gnupg
-  core/libffi
-  core/gcc
-  core/glibc
 )
 
 do_unpack() {
