@@ -11,7 +11,7 @@ pkg_bin_dirs=(bin)
 pkg_lib_dirs=(lib)
 
 pkg_build_deps=(
-  alasconnect/ghc/8.0.1
+  alasconnect/ghc/${pkg_version}
   core/make
   core/diffutils
   core/sed
