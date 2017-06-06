@@ -11,7 +11,7 @@ pkg_bin_dirs=(bin)
 pkg_lib_dirs=(lib)
 
 pkg_build_deps=(
-  jarvus/ghc
+  alasconnect/ghc/8.0.1
   core/make
   core/diffutils
   core/sed
@@ -31,9 +31,6 @@ pkg_deps=(
 )
 
 do_build() {
-  export LIBRARY_PATH="${LIBRARY_PATH}:${LD_RUN_PATH}"
-  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${LD_RUN_PATH}"
-
   libffi_include=$(find $(pkg_path_for core/libffi)/lib/ -name "libffi-*.*.*")
 
   if [ -z "${libffi_include}" ]; then
