@@ -1,3 +1,6 @@
+# NOTE: This plan is not ready. For now, use haskell-stack-bin
+# Details: https://gist.github.com/wduncanfraser/0d53bd51fcacc59211c16f4186727c62
+# TODO: Figure out what is going on
 pkg_name=haskell-stack
 pkg_origin=alasconnect
 pkg_version=1.4.0
@@ -16,29 +19,42 @@ pkg_build_deps=(
 )
 
 pkg_deps=(
-  core/git
+  core/gcc
+  core/glibc
+  core/make
+  core/xz
+  core/perl
   core/gmp/6.1.0/20170513202112
   core/libffi
   core/libiconv
   core/zlib
-  core/glibc
+  core/git
+  core/gnupg
 )
 
 do_clean() {
   do_default_clean
 
-  # Strip any previous stack config/cache
+  # Strip any previous stack/cabal config/cache
   rm -rf /root/.stack
+  rm -rf /root/.cabal
 }
 
 do_build() {
+  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$(pkg_path_for core/libiconv)/lib:$(pkg_path_for core/gcc)/lib"
+
   cabal sandbox init
   cabal update
 
+  cabal install --only-dependencies --extra-include-dirs=$(pkg_path_for core/zlib)/include --extra-lib-dirs=$(pkg_path_for core/zlib)/lib
+
   attach
-  cabal install --extra-include-dirs=$(pkg_path_for core/zlib)/include --extra-lib-dirs=$(pkg_path_for core/zlib)/lib
+  cabal configure --extra-include-dirs=$(pkg_path_for core/zlib)/include --extra-lib-dirs=$(pkg_path_for core/zlib)/lib
+  cabal build
+  #cabal install --extra-include-dirs=$(pkg_path_for core/zlib)/include --extra-lib-dirs=$(pkg_path_for core/zlib)/lib
 }
 
 do_install() {
+  #TBD
   attach
 }
