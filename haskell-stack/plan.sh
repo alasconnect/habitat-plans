@@ -13,13 +13,15 @@ pkg_shasum=edad1b32eb44acc7632a6b16726cd634f74383fd1c05757dccca1744d1ca3642
 pkg_dirname=stack-${pkg_version}
 pkg_bin_dirs=(bin)
 
+source_checksum=595d311ad117e41ad908b7065743917542b40f343d1334673e98171ee74d36e6
+
 pkg_build_deps=(
   alasconnect/ghc
   alasconnect/cabal-install
+  core/gcc
 )
 
 pkg_deps=(
-  core/gcc
   core/glibc
   core/make
   core/xz
@@ -34,8 +36,13 @@ pkg_deps=(
   core/cacerts
 )
 
+do_download() {
+  do_default_download
+
+  download_file https://github.com/commercialhaskell/stack/archive/v${pkg_version}.tar.gz source_archive.tar.gz ${source_checksum}
+}
+
 do_clean() {
-  return 0
   do_default_clean
 
   # Strip any previous stack/cabal config/cache
@@ -43,24 +50,50 @@ do_clean() {
   rm -rf /root/.cabal
 }
 
+do_unpack() {
+  do_default_unpack
+
+  mkdir -p source_archive
+  tar zxf source_archive.tar.gz --strip-components=1 -C source_archive
+}
+
 do_build() {
-  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$(pkg_path_for core/libiconv)/lib:$(pkg_path_for core/gcc)/lib"
-  export SYSTEM_CERTIFICATE_PATH="$(pkg_path_for core/cacerts)/ssl"
-  ln -sfv "$(pkg_path_for core/iana-etc)/etc/protocols" /etc
+  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$(pkg_path_for libiconv)/lib:$(pkg_path_for gcc)/lib"
+  export SYSTEM_CERTIFICATE_PATH="$(pkg_path_for cacerts)/ssl"
+  ln -sfv "$(pkg_path_for iana-etc)/etc/protocols" /etc
 
   cabal sandbox init
   cabal update
 
   cabal install  \
-    --extra-include-dirs=$(pkg_path_for core/zlib)/include \
-    --extra-lib-dirs=$(pkg_path_for core/zlib)/lib
+    --extra-include-dirs=$(pkg_path_for zlib)/include \
+    --extra-lib-dirs=$(pkg_path_for zlib)/lib
 
-  attach
   # Stage 2 stack bootstrap
-  .cabal-sandbox/bin/stack setup --system-ghc --stack-yaml=stack-8.0.yaml
+  pushd $HAB_CACHE_SRC_PATH/source_archive
+
+  $HAB_CACHE_SRC_PATH/$pkg_dirname/.cabal-sandbox/bin/stack setup \
+    --system-ghc --stack-yaml=stack-8.0.yaml
+
+  $HAB_CACHE_SRC_PATH/$pkg_dirname/.cabal-sandbox/bin/stack build \
+    --system-ghc --stack-yaml=stack-8.0.yaml \
+    --extra-include-dirs=$(pkg_path_for zlib)/include \
+    --extra-lib-dirs=$(pkg_path_for zlib)/lib
+
+  popd
 }
 
 do_install() {
-  attach
-  cabal install --prefix="$pkg_prefix"
+  pushd $HAB_CACHE_SRC_PATH/source_archive
+
+  $HAB_CACHE_SRC_PATH/$pkg_dirname/.cabal-sandbox/bin/stack install --local-bin-path "$pkg_prefix/bin" --copy-bins \
+    --system-ghc --stack-yaml=stack-8.0.yaml \
+    --extra-include-dirs=$(pkg_path_for zlib)/include \
+    --extra-lib-dirs=$(pkg_path_for zlib)/lib
+
+  popd
+}
+
+do_end() {
+  rm -fv /etc/protocols
 }
