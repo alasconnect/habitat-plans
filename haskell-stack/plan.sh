@@ -8,8 +8,8 @@ pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_license=('BSD-3-Clause')
 pkg_upstream_url=https://www.haskellstack.org/
 pkg_description="Stack is a cross-platform program for developing Haskell projects."
-pkg_source=https://github.com/commercialhaskell/stack/archive/v${pkg_version}.tar.gz
-pkg_shasum=595d311ad117e41ad908b7065743917542b40f343d1334673e98171ee74d36e6
+pkg_source=https://github.com/commercialhaskell/stack/releases/download/v${pkg_version}/stack-${pkg_version}-sdist-0.tar.gz
+pkg_shasum=edad1b32eb44acc7632a6b16726cd634f74383fd1c05757dccca1744d1ca3642
 pkg_dirname=stack-${pkg_version}
 pkg_bin_dirs=(bin)
 
@@ -30,9 +30,12 @@ pkg_deps=(
   core/zlib
   core/git
   core/gnupg
+  core/iana-etc
+  core/cacerts
 )
 
 do_clean() {
+  return 0
   do_default_clean
 
   # Strip any previous stack/cabal config/cache
@@ -42,19 +45,22 @@ do_clean() {
 
 do_build() {
   export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:$(pkg_path_for core/libiconv)/lib:$(pkg_path_for core/gcc)/lib"
+  export SYSTEM_CERTIFICATE_PATH="$(pkg_path_for core/cacerts)/ssl"
+  ln -sfv "$(pkg_path_for core/iana-etc)/etc/protocols" /etc
 
   cabal sandbox init
   cabal update
 
-  cabal install --only-dependencies --extra-include-dirs=$(pkg_path_for core/zlib)/include --extra-lib-dirs=$(pkg_path_for core/zlib)/lib
+  cabal install  \
+    --extra-include-dirs=$(pkg_path_for core/zlib)/include \
+    --extra-lib-dirs=$(pkg_path_for core/zlib)/lib
 
   attach
-  cabal configure --extra-include-dirs=$(pkg_path_for core/zlib)/include --extra-lib-dirs=$(pkg_path_for core/zlib)/lib
-  cabal build
-  #cabal install --extra-include-dirs=$(pkg_path_for core/zlib)/include --extra-lib-dirs=$(pkg_path_for core/zlib)/lib
+  # Stage 2 stack bootstrap
+  .cabal-sandbox/bin/stack setup --system-ghc --stack-yaml=stack-8.0.yaml
 }
 
 do_install() {
-  #TBD
   attach
+  cabal install --prefix="$pkg_prefix"
 }
