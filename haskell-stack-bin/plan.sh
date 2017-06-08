@@ -24,7 +24,7 @@ pkg_deps=(
   core/git
   core/gnupg
   core/tar
-  core/ncurses
+  alasconnect/ncurses
   core/gawk
 )
 
@@ -33,22 +33,26 @@ do_build() {
 }
 
 do_install() {
-  cp -vr stack $pkg_prefix/bin
+  cp -vr stack $pkg_prefix
 
-  cat > "$pkg_prefix/bin/stack-wrapper" <<- EOF
+  cat > "$pkg_prefix/bin/stack" <<- EOF
 #!/bin/sh
 
 export SYSTEM_CERTIFICATE_PATH="$(pkg_path_for cacerts)/ssl/certs"
 
+# Help Stack access sh. Required for 'network' and 'old-time' packages for example
+export PATH="\$PATH:/bin"
+
 export AWK="$(pkg_path_for gawk)/bin/awk"
 
-export LIBRARY_PATH="${LIBRARY_PATH}:${LD_RUN_PATH}"
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${LD_RUN_PATH}"
+export LIBRARY_PATH="\$LIBRARY_PATH:${LD_RUN_PATH}"
+export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:${LD_RUN_PATH}"
+export LD_RUN_PATH="\$LD_RUN_PATH:${LD_RUN_PATH}"
 
-exec "$pkg_prefix/bin/stack" --system-ghc \
+exec "$pkg_prefix/stack" --system-ghc \
   --extra-include-dirs="$(pkg_path_for core/zlib)/include" \
   --extra-lib-dirs="$(pkg_path_for core/zlib)/lib" \$@
 EOF
 
-  chmod +x "$pkg_prefix/bin/stack-wrapper"
+  chmod +x "$pkg_prefix/bin/stack"
 }

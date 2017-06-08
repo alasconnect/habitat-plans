@@ -15,19 +15,20 @@ pkg_build_deps=(
   core/make
   core/diffutils
   core/sed
-  core/python
+  # core/python - Not needed until we work out tests
   core/patch
+  core/gcc
 )
 
 pkg_deps=(
   core/perl
-  core/gcc
+  core/gcc-libs
   core/glibc
   core/gmp/6.1.0/20170513202112
   core/libedit
   core/libffi
   core/libiconv
-  core/ncurses
+  alasconnect/ncurses
 )
 
 do_build() {
@@ -43,8 +44,8 @@ do_build() {
     --with-system-libffi \
     --with-ffi-libraries="$(pkg_path_for core/libffi)/lib" \
     --with-ffi-includes="${libffi_include}/include" \
-    --with-curses-includes="$(pkg_path_for core/ncurses)/include" \
-    --with-curses-libraries="$(pkg_path_for core/ncurses)/lib" \
+    --with-curses-includes="$(pkg_path_for alasconnect/ncurses)/include" \
+    --with-curses-libraries="$(pkg_path_for alasconnect/ncurses)/lib" \
     --with-gmp-includes="$(pkg_path_for core/gmp)/include" \
     --with-gmp-libraries="$(pkg_path_for core/gmp)/lib" \
     --with-iconv-includes="$(pkg_path_for core/libiconv)/include" \
