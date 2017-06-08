@@ -24,7 +24,7 @@ pkg_deps=(
   core/git
   core/gnupg
   core/tar
-  core/ncurses
+  alasconnect/ncurses
   core/gawk
 )
 

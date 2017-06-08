@@ -14,6 +14,7 @@ pkg_build_deps=(
   core/curl
   core/which
   core/sed
+  core/gcc
 )
 
 pkg_deps=(
@@ -21,6 +22,7 @@ pkg_deps=(
   core/libffi
   core/libiconv
   core/zlib
+  core/glibc
 )
 
 do_clean() {
