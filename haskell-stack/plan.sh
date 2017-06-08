@@ -1,6 +1,3 @@
-# NOTE: This plan is not ready. For now, use haskell-stack-bin
-# Details: https://gist.github.com/wduncanfraser/0d53bd51fcacc59211c16f4186727c62
-# TODO: Figure out what is going on
 pkg_name=haskell-stack
 pkg_origin=alasconnect
 pkg_version=1.4.0
