@@ -5,9 +5,9 @@ pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_license=('MIT')
 pkg_upstream_url=https://github.com/ghcjs/ghcjs
 pkg_description="GHCJS is a Haskell to JavaScript compiler that uses the GHC API."
-pkg_source=http://ghcjs.luite.com/ghc-8.0.tar.gz
+pkg_source=http://ghcjs.luite.com/ghc-8.0-20170610.tar.gz
 pkg_filename=${pkg_name}-${pkg_version}.tar.gz
-pkg_shasum=b2070325fa4ae55c2000d5e61a782e26198ccea292a3c82c8ac2919334e8768a
+pkg_shasum=978621c41107a4ae1abe224c7b122c909d15b867d8e91bdf04b671ce4ec4014e
 
 pkg_bin_dirs=(bin)
 pkg_lib_dirs=(lib)

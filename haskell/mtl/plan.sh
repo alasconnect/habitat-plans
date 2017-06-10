@@ -18,7 +18,6 @@ pkg_deps=(
 
 pkg_build_deps=(
   core/sed
-  core/gcc
 )
 
 do_prepare() {
@@ -31,8 +30,11 @@ do_build() {
     --enable-shared
 
   runhaskell Setup build
+  runhaskell Setup register --gen-script
+  sed -i -r -e "s|ghc-pkg.*update[^ ]* |&'--force' |" register.sh
 }
 
 do_install() {
   runhaskell Setup install
+  install register.sh ${pkg_prefix}
 }

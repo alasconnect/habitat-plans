@@ -9,20 +9,20 @@ pkg_source=https://www.haskell.org/cabal/release/cabal-install-${pkg_version}/ca
 pkg_shasum=2ac8819238a0e57fff9c3c857e97b8705b1b5fef2e46cd2829e85d96e2a00fe0
 pkg_bin_dirs=(bin)
 
-pkg_build_deps=(
-  alasconnect/ghc
-  core/curl
-  core/which
-  core/sed
-  core/gcc
-)
-
 pkg_deps=(
   core/gmp/6.1.0/20170513202112
   core/libffi
   core/libiconv
   core/zlib
   core/glibc
+)
+
+pkg_build_deps=(
+  alasconnect/ghc
+  core/curl
+  core/which
+  core/sed
+  core/gcc
 )
 
 do_clean() {
@@ -38,7 +38,7 @@ do_build() {
   # Manually applying patch that resolves issue.
   sed -i '72 c\          $CC -print-prog-name=$link && break' bootstrap.sh
 
-  EXTRA_CONFIGURE_OPTS="--extra-include-dirs=$(pkg_path_for core/zlib)/include --extra-lib-dirs=$(pkg_path_for core/zlib)/lib" ./bootstrap.sh --sandbox
+  EXTRA_CONFIGURE_OPTS="--extra-include-dirs=$(pkg_path_for zlib)/include --extra-lib-dirs=$(pkg_path_for zlib)/lib" ./bootstrap.sh --sandbox
 }
 
 do_check() {
