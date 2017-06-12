@@ -4,18 +4,11 @@ pkg_version=1.24.0.2
 pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_license=('BSD-3-Clause')
 pkg_upstream_url=https://www.haskell.org/cabal/
-pkg_description="Command-line interface for Cabal and Hackager"
+pkg_description="Command-line interface for Cabal and Hackage"
 pkg_source=https://www.haskell.org/cabal/release/cabal-install-${pkg_version}/cabal-install-${pkg_version}.tar.gz
 pkg_shasum=2ac8819238a0e57fff9c3c857e97b8705b1b5fef2e46cd2829e85d96e2a00fe0
-pkg_bin_dirs=(bin)
 
-pkg_build_deps=(
-  alasconnect/ghc
-  core/curl
-  core/which
-  core/sed
-  core/gcc
-)
+pkg_bin_dirs=(bin)
 
 pkg_deps=(
   core/gmp/6.1.0/20170513202112
@@ -23,6 +16,13 @@ pkg_deps=(
   core/libiconv
   core/zlib
   core/glibc
+)
+
+pkg_build_deps=(
+  alasconnect/ghc
+  core/curl
+  core/which
+  core/sed
 )
 
 do_clean() {
@@ -38,7 +38,7 @@ do_build() {
   # Manually applying patch that resolves issue.
   sed -i '72 c\          $CC -print-prog-name=$link && break' bootstrap.sh
 
-  EXTRA_CONFIGURE_OPTS="--extra-include-dirs=$(pkg_path_for core/zlib)/include --extra-lib-dirs=$(pkg_path_for core/zlib)/lib" ./bootstrap.sh --sandbox
+  EXTRA_CONFIGURE_OPTS="--extra-include-dirs=$(pkg_path_for zlib)/include --extra-lib-dirs=$(pkg_path_for zlib)/lib" ./bootstrap.sh --sandbox
 }
 
 do_check() {

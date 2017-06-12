@@ -8,15 +8,9 @@ pkg_description="Stack is a cross-platform program for developing Haskell projec
 pkg_source=https://github.com/commercialhaskell/stack/releases/download/v${pkg_version}/stack-${pkg_version}-sdist-0.tar.gz
 pkg_shasum=edad1b32eb44acc7632a6b16726cd634f74383fd1c05757dccca1744d1ca3642
 pkg_dirname=stack-${pkg_version}
-pkg_bin_dirs=(bin)
-
 source_checksum=595d311ad117e41ad908b7065743917542b40f343d1334673e98171ee74d36e6
 
-pkg_build_deps=(
-  alasconnect/ghc
-  alasconnect/cabal-install
-  core/gcc
-)
+pkg_bin_dirs=(bin)
 
 pkg_deps=(
   core/glibc
@@ -29,6 +23,12 @@ pkg_deps=(
   core/zlib
   core/git
   core/gnupg
+)
+
+pkg_build_deps=(
+  alasconnect/ghc
+  alasconnect/cabal-install
+  core/gcc
   core/iana-etc
   core/cacerts
 )
