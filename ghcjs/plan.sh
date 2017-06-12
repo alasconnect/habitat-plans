@@ -7,7 +7,7 @@ pkg_upstream_url=https://github.com/ghcjs/ghcjs
 pkg_description="GHCJS is a Haskell to JavaScript compiler that uses the GHC API."
 pkg_source=http://ghcjs.luite.com/ghc-8.0-20170610.tar.gz
 pkg_filename=${pkg_name}-${pkg_version}.tar.gz
-pkg_shasum=978621c41107a4ae1abe224c7b122c909d15b867d8e91bdf04b671ce4ec4014e
+pkg_shasum=73441475c05d428ca877167e460e99729f7feaf985d4f544ef22d7d3746cde3d
 
 pkg_bin_dirs=(bin)
 pkg_lib_dirs=(lib)
