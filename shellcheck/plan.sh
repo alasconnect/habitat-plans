@@ -1,14 +1,17 @@
 pkg_name=shellcheck
+hkg_name=ShellCheck
 pkg_origin=alasconnect
-pkg_version=1.19.5
+pkg_version=0.4.6
 pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
-pkg_license=('BSD-3-Clause')
-pkg_upstream_url=https://www.haskell.org/happy/
-pkg_description="Happy is a parser generator for Haskell. Given a grammar specification in BNF, Happy generates Haskell code to parse the grammar. Happy works in a similar way to the yacc tool for C."
-pkg_source=https://hackage.haskell.org/package/${pkg_name}-${pkg_version}/${pkg_name}-${pkg_version}.tar.gz
-pkg_shasum=62f03ac11d7b4b9913f212f5aa2eee1087f3b46dc07d799d41e1854ff02843da
+pkg_license=('GPL-3')
+pkg_upstream_url=http://www.shellcheck.net/
+pkg_description="ShellCheck is a GPLv3 tool that gives warnings and suggestions for bash/sh shell scripts"
+pkg_source=https://hackage.haskell.org/package/${hkg_name}-${pkg_version}/${hkg_name}-${pkg_version}.tar.gz
+pkg_shasum=11eb9b2794363fbccc6fbd18601db49680e2c439440a9b103eebfda1aa86b1bc
+pkg_dirname=${hkg_name}-${pkg_version}
 
 pkg_bin_dirs=(bin)
+pkg_lib_dirs=(lib)
 
 pkg_deps=(
   core/gmp/6.1.0/20170513202112
@@ -19,16 +22,24 @@ pkg_deps=(
 
 pkg_build_deps=(
   alasconnect/ghc
-  alasconnect/haskell-mtl
+  alasconnect/cabal-install
 )
 
-do_build() {
-  runhaskell Setup.lhs configure --prefix=${pkg_prefix} -O \
-    --enable-shared
+do_clean() {
+  do_default_clean
 
-  runhaskell Setup.lhs build
+  # Strip any previous cabal config
+  rm -rf /root/.cabal
+}
+
+do_build() {
+  cabal sandbox init
+  cabal update
+
+  cabal install --only-dependencies
+  cabal build
 }
 
 do_install() {
-  runhaskell Setup.lhs install
+  cabal install --prefix="$pkg_prefix"
 }

@@ -1,12 +1,12 @@
-pkg_name=happy
+pkg_name=dbmigrations-sqlite
 pkg_origin=alasconnect
-pkg_version=1.19.5
+pkg_version=2.0.0
 pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_license=('BSD-3-Clause')
-pkg_upstream_url=https://www.haskell.org/happy/
-pkg_description="Happy is a parser generator for Haskell. Given a grammar specification in BNF, Happy generates Haskell code to parse the grammar. Happy works in a similar way to the yacc tool for C."
+pkg_upstream_url=https://github.com/jtdaugherty/dbmigrations
+pkg_description="The dbmigrations tool built for SQLite databases"
 pkg_source=https://hackage.haskell.org/package/${pkg_name}-${pkg_version}/${pkg_name}-${pkg_version}.tar.gz
-pkg_shasum=62f03ac11d7b4b9913f212f5aa2eee1087f3b46dc07d799d41e1854ff02843da
+pkg_shasum=0ca8140ac27919890c93f45c20bdd25b4c190eec60a330069d89cb8b9a481320
 
 pkg_bin_dirs=(bin)
 
@@ -15,24 +15,30 @@ pkg_deps=(
   core/libffi
   core/libiconv
   core/glibc
+  core/sqlite
 )
 
 pkg_build_deps=(
   alasconnect/ghc
   alasconnect/cabal-install
+  core/gcc-libs
 )
 
 do_clean() {
   do_default_clean
 
-  # Strip any previous cabal config/cache
+  # Strip any previous cabal config
   rm -rf /root/.cabal
 }
 
 do_build() {
+  export LD_LIBRARY_PATH="${LIBRARY_PATH}:$(pkg_path_for core/gcc-libs)/lib"
+
+  cabal sandbox init
   cabal update
 
-  cabal install --only-dependencies
+  cabal install --only-dependencies \
+    --extra-lib-dirs=$(pkg_path_for sqlite)/lib --extra-include-dirs=$(pkg_path_for sqlite)/include
   cabal build
 }
 

@@ -19,16 +19,23 @@ pkg_deps=(
 
 pkg_build_deps=(
   alasconnect/ghc
-  alasconnect/happy
-  alasconnect/haskell-quickcheck
+  alasconnect/cabal-install
 )
 
-do_build() {
-  runhaskell Setup.lhs configure --prefix=${pkg_prefix}
+do_clean() {
+  do_default_clean
 
-  runhaskell Setup.lhs build
+  # Strip any previous cabal config/cache
+  rm -rf /root/.cabal
+}
+
+do_build() {
+  cabal update
+
+  cabal install --only-dependencies
+  cabal build
 }
 
 do_install() {
-  runhaskell Setup.lhs install
+  cabal install --prefix="$pkg_prefix"
 }
