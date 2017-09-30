@@ -1,12 +1,12 @@
 pkg_name=greenplum-db
 pkg_origin=alasconnect
-pkg_version=5.0.0-alpha.8
+pkg_version=5.0.0
 pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_license=('Apache-2.0')
 pkg_upstream_url=http://greenplum.org/
 pkg_description="Greenplum Database® is an advanced, fully featured, open source data warehouse."
 pkg_source=https://github.com/greenplum-db/gpdb/archive/${pkg_version}.tar.gz
-pkg_shasum=5c505815b9ad28bdfe98aa73c487d924d0168fb8b7e4e1343b1f25fc099f1035
+pkg_shasum=4bb8c353831889d53a743e7ffcaac3aa1b60aef7facf7cd9e3bee2887470aafe
 pkg_dirname=gpdb-${pkg_version}
 
 pkg_bin_dirs=(bin)
@@ -23,7 +23,7 @@ pkg_deps=(
   core/perl
   core/libxml2
   core/libffi
-  alasconnect/gporca
+  alasconnect/gporca/2.42.3
   alasconnect/gp-xerces
   core/readline
   core/apr
@@ -64,13 +64,16 @@ EOF
     --sysconfdir="$pkg_svc_config_path" \
     --localstatedir="$pkg_svc_var_path"
 
-
   fix_interpreter "src/backend/catalog/*" core/perl bin/perl
   fix_interpreter "src/test/regress/*" core/coreutils bin/env
 
-  make
+  make -j8
 }
 
 do_install() {
-  attach
+  sed -i '4 c\sys.exit(0)' src/test/regress/checkinc.py
+
+  make -j8 install
+
+  fix_interpreter "${pkg_prefix}/bin" core/coreutils bin/env
 }
