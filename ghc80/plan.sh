@@ -1,12 +1,13 @@
-pkg_name=ghc
+pkg_name=ghc80
 pkg_origin=alasconnect
 pkg_version=8.0.2
-pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_license=('BSD-3-Clause')
 pkg_upstream_url=https://www.haskell.org/ghc/
 pkg_description="The Glasgow Haskell Compiler"
+pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_source=http://downloads.haskell.org/~ghc/${pkg_version}/ghc-${pkg_version}-src.tar.xz
 pkg_shasum=11625453e1d0686b3fa6739988f70ecac836cadc30b9f0c8b49ef9091d6118b1
+pkg_dirname=ghc-${pkg_version}
 
 pkg_bin_dirs=(bin)
 pkg_lib_dirs=(lib)
@@ -24,14 +25,25 @@ pkg_deps=(
 )
 
 pkg_build_deps=(
-  alasconnect/ghc/${pkg_version}
+  alasconnect/ghc710-bootstrap
   core/make
   core/diffutils
   core/sed
   core/patch
 )
 
+do_prepare() {
+  do_default_prepare
+
+  cp mk/build.mk.sample mk/build.mk
+  sed -i '1iBuildFlavour = perf' mk/build.mk
+}
+
 do_build() {
+  # Setting these paths is only necessary when building from a binary bootstrap
+  export LIBRARY_PATH="${LIBRARY_PATH}:${LD_RUN_PATH}"
+  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${LD_RUN_PATH}"
+
   libffi_include=$(find $(pkg_path_for libffi)/lib/ -name "libffi-*.*.*")
 
   if [ -z "${libffi_include}" ]; then

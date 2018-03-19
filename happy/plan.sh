@@ -1,12 +1,12 @@
 pkg_name=happy
 pkg_origin=alasconnect
-pkg_version=1.19.5
+pkg_version=1.19.9
 pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_license=('BSD-3-Clause')
 pkg_upstream_url=https://www.haskell.org/happy/
 pkg_description="Happy is a parser generator for Haskell. Given a grammar specification in BNF, Happy generates Haskell code to parse the grammar. Happy works in a similar way to the yacc tool for C."
 pkg_source=https://hackage.haskell.org/package/${pkg_name}-${pkg_version}/${pkg_name}-${pkg_version}.tar.gz
-pkg_shasum=62f03ac11d7b4b9913f212f5aa2eee1087f3b46dc07d799d41e1854ff02843da
+pkg_shasum=3e81a3e813acca3aae52721c412cde18b7b7c71ecbacfaeaa5c2f4b35abf1d8d
 
 pkg_bin_dirs=(bin)
 
@@ -18,7 +18,7 @@ pkg_deps=(
 )
 
 pkg_build_deps=(
-  alasconnect/ghc
+  alasconnect/ghc82
   alasconnect/cabal-install
 )
 
@@ -30,12 +30,17 @@ do_clean() {
 }
 
 do_build() {
+  cabal sandbox init
   cabal update
 
+  # Install dependencies
   cabal install --only-dependencies
+
+  # Configure and Build
+  cabal configure --prefix="$pkg_prefix"
   cabal build
 }
 
 do_install() {
-  cabal install --prefix="$pkg_prefix"
+  cabal copy
 }
