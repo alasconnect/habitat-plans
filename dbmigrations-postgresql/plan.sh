@@ -21,9 +21,8 @@ pkg_deps=(
 )
 
 pkg_build_deps=(
-  alasconnect/ghc
+  alasconnect/ghc82
   alasconnect/cabal-install
-  core/gcc-libs
 )
 
 do_clean() {
@@ -34,15 +33,17 @@ do_clean() {
 }
 
 do_build() {
-  export LD_LIBRARY_PATH="${LIBRARY_PATH}:$(pkg_path_for core/gcc-libs)/lib"
-
   cabal sandbox init
   cabal update
 
+  # Install dependencies
   cabal install --only-dependencies
+
+  # Configure and Build
+  cabal configure --prefix="$pkg_prefix"
   cabal build
 }
 
 do_install() {
-  cabal install --prefix="$pkg_prefix"
+  cabal copy
 }

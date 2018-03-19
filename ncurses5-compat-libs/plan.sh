@@ -1,11 +1,13 @@
-pkg_name=ncurses
+pkg_name=ncurses5-compat-libs
 pkg_origin=alasconnect
 pkg_version=6.0
-pkg_description="The ncurses (new curses) library"
+pkg_description="The ncurses (new curses) library with version 5 API"
 pkg_upstream_url=https://www.gnu.org/software/ncurses/
 pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_license=('ncurses')
-pkg_source=http://ftp.gnu.org/gnu/${pkg_name}/${pkg_name}-${pkg_version}.tar.gz
+pkg_dirname=ncurses-${pkg_version}
+pkg_filename=${pkg_dirname}.tar.gz
+pkg_source=http://ftp.gnu.org/gnu/ncurses/${pkg_filename}
 pkg_shasum=f551c24b30ce8bfb6e96d9f59b42fbea30fa3a6123384172f9e7284bcf647260
 pkg_deps=(core/glibc core/gcc-libs)
 pkg_build_deps=(core/coreutils core/diffutils core/patch core/make core/gcc core/wget core/bzip2)
@@ -34,7 +36,8 @@ do_build() {
     --without-debug \
     --with-normal \
     --enable-overwrite \
-    --disable-rpath-hack
+    --disable-rpath-hack \
+    --with-abi-version=5
   make
 }
 
@@ -47,13 +50,9 @@ do_install() {
   # properly
   #
   # Thanks to: http://clfs.org/view/sysvinit/x86_64-64/final-system/ncurses.html
-  local maj maj_min
-  maj=$(echo ${pkg_version} | cut -d "." -f 1)
-  maj_min=$(echo ${pkg_version} | cut -d "." -f 1-2)
   for x in curses ncurses form panel menu tinfo; do
     ln -sv lib${x}w.so "$pkg_prefix/lib/lib${x}.so"
-    ln -sv lib${x}w.so "$pkg_prefix/lib/lib${x}.so.$maj"
-    ln -sv lib${x}w.so "$pkg_prefix/lib/lib${x}.so.$maj_min"
+    ln -sv lib${x}w.so "$pkg_prefix/lib/lib${x}.so.5"
     ln -sv ${x}w.pc "$pkg_prefix/lib/pkgconfig/${x}.pc"
   done
   ln -sfv libncursesw.so "$pkg_prefix/lib/libcursesw.so"
