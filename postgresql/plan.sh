@@ -1,5 +1,5 @@
 pkg_name=postgresql
-pkg_version=9.6.3
+pkg_version=9.6.6
 pkg_origin=alasconnect
 pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_description="PostgreSQL is a powerful, open source object-relational database system."
@@ -20,10 +20,6 @@ pkg_exports=(
 )
 
 pkg_exposes=(port)
-
-pkg_svc_user=root
-pkg_svc_group=$pkg_svc_user
-
 
 do_build() {
   return 0
