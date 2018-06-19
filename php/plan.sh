@@ -18,7 +18,7 @@ pkg_deps=(
   core/libxml2
   core/libjpeg-turbo
   core/libpng
-  core/openssl/1.0.2l/20171014213633
+  core/openssl
   core/postgresql
   core/zlib
 )
