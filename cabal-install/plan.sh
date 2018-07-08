@@ -1,12 +1,12 @@
 pkg_name=cabal-install
 pkg_origin=alasconnect
-pkg_version=2.0.0.1
+pkg_version=2.2.0.0
 pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_license=('BSD-3-Clause')
 pkg_upstream_url="https://www.haskell.org/cabal/"
 pkg_description="Command-line interface for Cabal and Hackage"
 pkg_source="https://www.haskell.org/cabal/release/cabal-install-${pkg_version}/cabal-install-${pkg_version}.tar.gz"
-pkg_shasum="f991e36f3adaa1c7e2f0c422a2f2a4ab21b7041c82a8896f72afc9843a0d5d99"
+pkg_shasum="c856a2dd93c5a7b909597c066b9f9ca27fbda1a502b3f96077b7918c0f64a3d9"
 
 pkg_bin_dirs=(bin)
 
@@ -18,7 +18,7 @@ pkg_deps=(
 )
 
 pkg_build_deps=(
-  alasconnect/ghc82
+  alasconnect/ghc
   core/curl
   core/sed
   core/which

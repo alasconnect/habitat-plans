@@ -17,7 +17,7 @@ pkg_deps=(
 )
 
 pkg_build_deps=(
-  alasconnect/ghc82
+  alasconnect/ghc
   alasconnect/cabal-install
 )
 
