@@ -16,10 +16,10 @@ ghc_version=8.0.2
 
 pkg_deps=(
   core/glibc
-  core/gmp/6.1.0/20170513202112
+  core/gmp
   core/libffi
   core/libiconv
-  alasconnect/ncurses
+  core/ncurses
   core/node
 )
 
