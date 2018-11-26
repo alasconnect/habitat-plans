@@ -1,6 +1,6 @@
 pkg_name=concourse
 pkg_origin=alasconnect
-pkg_version="3.13.0"
+pkg_version="4.2.1"
 pkg_maintainer="AlasConnect LLC <devops@alasconnect.com>"
 pkg_license=('Apache-2.0')
 pkg_upstream_url="https://concourse.ci"
