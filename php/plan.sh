@@ -17,7 +17,7 @@ pkg_deps=(
   core/libjpeg-turbo
   core/libpng
   core/openssl
-  core/postgresql
+  core/postgresql-client
   core/readline
   core/zlib
 )
@@ -44,8 +44,8 @@ do_build() {
     --with-mysql=mysqlnd \
     --with-mysqli=mysqlnd \
     --with-pdo-mysql=mysqlnd \
-    --with-pgsql="$(pkg_path_for postgresql)" \
-    --with-pdo-pgsql="$(pkg_path_for postgresql)" \
+    --with-pgsql="$(pkg_path_for postgresql-client)" \
+    --with-pdo-pgsql="$(pkg_path_for postgresql-client)" \
     --with-readline="$(pkg_path_for readline)" \
     --with-curl="$(pkg_path_for curl)" \
     --with-gd \
