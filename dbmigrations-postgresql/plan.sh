@@ -15,13 +15,13 @@ pkg_deps=(
   core/gmp
   core/libffi
   core/openssl
-  core/postgresql
+  core/postgresql-client
   core/zlib
 )
 
 pkg_build_deps=(
-  alasconnect/ghc
-  alasconnect/cabal-install
+  core/ghc
+  core/cabal-install
 )
 
 do_clean() {
